@@ -1,100 +1,175 @@
-</html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>February 14</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>February 14, 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Georgia, serif;
-      background: #0e0e0e;
-      color: #f5f5f5;
+      margin: 0;
+      font-family: 'Georgia', serif;
+      background: linear-gradient(135deg, #5a001f, #2b000f);
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
       text-align: center;
     }
 
-    .container {
-      max-width: 600px;
-      padding: 30px;
+    .card {
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 18px;
+      padding: 30px 22px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 0 35px rgba(180, 0, 60, 0.4);
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      margin-bottom: 10px;
+      font-weight: normal;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .countdown {
+      font-size: 1.2rem;
+      margin: 18px 0;
+      color: #ff9bb8;
+      letter-spacing: 1px;
     }
 
     input {
-      padding: 10px;
-      width: 80%;
-      margin-top: 10px;
-      font-size: 16px;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      text-align: center;
     }
 
     button {
-      padding: 10px 20px;
-      margin-top: 15px;
-      font-size: 16px;
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #b3003c;
+      color: white;
       cursor: pointer;
     }
 
-    iframe {
-      width: 100%;
-      height: 90vh;
-      border: none;
+    button:hover {
+      background: #8f002f;
     }
 
-    .hidden {
+    .error {
+      color: #ffb3c7;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .content {
       display: none;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.6rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="container" id="locked">
-  <h1>🔒 This file is sealed</h1>
-  <p>
-    This message will open on  
-    <strong>February 14, 2026</strong>
-  </p>
+  <!-- AUDIO -->
+  <audio id="bgMusic" loop>
+    <source src="end-of-beginning.mp3" type="audio/mpeg">
+  </audio>
 
-  <p style="margin-top: 30px;">
-    Authorized preview:
-  </p>
+  <!-- LOCK SCREEN -->
+  <div class="card" id="lockScreen">
+    <h1>Locked</h1>
+    <p>This page opens on</p>
+    <p><strong>February 14, 2026</strong></p>
 
-  <input type="password" id="password" placeholder="Enter your access code" />
-  <br />
-  <button onclick="unlock()">Unlock</button>
+    <div class="countdown" id="countdown"></div>
 
-  <p id="error" style="color:#ff6b6b;"></p>
-</div>
+    <p>Enter password to open early</p>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button onclick="unlock()">Unlock</button>
+    <div class="error" id="errorMessage"></div>
+  </div>
 
-<div class="container hidden" id="content">
-  <iframe src="Feb-14.pdf"></iframe>
-</div>
+  <!-- CONTENT -->
+  <div class="card content" id="content">
+    <h1>End of Beginning</h1>
+    <p>
+      If you’re here, then time finally arrived.
+      <br><br>
+      This space is yours.
+      <br>
+      You can paste your letter, memories,
+      or anything you want remembered.
+    </p>
+  </div>
 
-<script>
-  const RELEASE_DATE = new Date("2026-02-14T00:00:00");
-  const SECRET_PASSWORD = "OCTOBER_27_2007";
+  <script>
+    const correctPassword = "OCTOBER272007TRISH";
+    const targetDate = new Date("February 14, 2026 00:00:00");
+    const music = document.getElementById("bgMusic");
 
-  const now = new Date();
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
 
-  if (now >= RELEASE_DATE) {
-    showContent();
-  }
+      if (diff <= 0) {
+        showContent();
+        return;
+      }
 
-  function unlock() {
-    const input = document.getElementById("password").value;
-    if (input === SECRET_PASSWORD) {
-      showContent();
-    } else {
-      document.getElementById("error").textContent = "Incorrect access code.";
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("countdown").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
-  }
 
-  function showContent() {
-    document.getElementById("locked").classList.add("hidden");
-    document.getElementById("content").classList.remove("hidden");
-  }
-</script>
+    function showContent() {
+      document.getElementById("lockScreen").style.display = "none";
+      document.getElementById("content").style.display = "block";
+      music.volume = 0.6;
+      music.play();
+    }
+
+    function unlock() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === correctPassword) {
+        showContent();
+      } else {
+        document.getElementById("errorMessage").textContent =
+          "Incorrect password.";
+      }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
 
 </body>
 </html>
